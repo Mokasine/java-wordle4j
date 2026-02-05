@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 public class Wordle {
     private static final String LOG_FILE = "wordle.log";
-    private static final String DICTIONARY_FILE = "words_ru.txt"; // Изменено на words_ru.txt
+    private static final String DICTIONARY_FILE = "words_ru.txt";
 
     public static void main(String[] args) {
         PrintWriter log = null;

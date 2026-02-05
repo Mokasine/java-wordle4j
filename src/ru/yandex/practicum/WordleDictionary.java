@@ -4,11 +4,11 @@ import java.util.*;
 
 public class WordleDictionary {
     private List<String> words;
-    private Set<String> wordSet;
+    private Random random;
 
     public WordleDictionary(List<String> words) {
         this.words = new ArrayList<>(words);
-        this.wordSet = new HashSet<>(words);
+        this.random = new Random();
     }
 
     public List<String> getWords() {
@@ -16,7 +16,7 @@ public class WordleDictionary {
     }
 
     public boolean contains(String word) {
-        return wordSet.contains(word);
+        return words.contains(word);
     }
 
     public boolean isEmpty() {
@@ -31,7 +31,6 @@ public class WordleDictionary {
         if (isEmpty()) {
             throw new IllegalStateException("Словарь пуст");
         }
-        Random random = new Random();
         return words.get(random.nextInt(words.size()));
     }
 
@@ -104,7 +103,6 @@ public class WordleDictionary {
         return true;
     }
 
-    // Статические методы для сравнения слов
     public static String compareWords(String guess, String answer) {
         if (guess.length() != answer.length()) {
             throw new IllegalArgumentException("Слова должны быть одинаковой длины");

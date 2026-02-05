@@ -14,10 +14,11 @@ public class WordleGame {
     private boolean win = false;
 
     // Для фильтрации подсказок
-    private StringBuilder pattern; // Паттерн правильных букв (_ для неизвестных)
-    private Set<Character> correctLetters; // Буквы, которые точно есть
-    private Set<Character> wrongLetters; // Буквы, которых точно нет
-    private Map<Character, Set<Integer>> wrongPositions; // Буквы и позиции, где их нет
+    private StringBuilder pattern;
+    private Set<Character> correctLetters;
+    private Set<Character> wrongLetters;
+    private Map<Character, Set<Integer>> wrongPositions;
+    private Random random;
 
     public WordleGame(WordleDictionary dictionary, PrintWriter log) {
         this.dictionary = dictionary;
@@ -26,6 +27,7 @@ public class WordleGame {
         this.steps = 0;
         this.guesses = new ArrayList<>();
         this.results = new ArrayList<>();
+        this.random = new Random();
 
         // Инициализация структур для подсказок
         this.pattern = new StringBuilder("_____");
@@ -80,7 +82,7 @@ public class WordleGame {
     }
 
     private void updateHintInfo(String guess, String result) {
-        for (int i = 0; i < result.length(); i++) {
+        for (int i = 0; i < 5; i++) {
             char resultChar = result.charAt(i);
             char guessChar = guess.charAt(i);
 
@@ -94,7 +96,6 @@ public class WordleGame {
                 wrongPositions.computeIfAbsent(guessChar, k -> new HashSet<>()).add(i);
             } else if (resultChar == '-') {
                 // Буквы нет в слове
-                // Добавляем в wrongLetters только если эта буква не встречается в correctLetters
                 if (!correctLetters.contains(guessChar)) {
                     wrongLetters.add(guessChar);
                 }
@@ -138,17 +139,21 @@ public class WordleGame {
         );
 
         // Убираем уже угаданные слова
-        possibleWords.removeAll(guesses);
+        List<String> filteredWords = new ArrayList<>();
+        for (String word : possibleWords) {
+            if (!guesses.contains(word)) {
+                filteredWords.add(word);
+            }
+        }
 
-        if (possibleWords.isEmpty()) {
+        if (filteredWords.isEmpty()) {
             throw new GameException("Не найдено подходящих слов");
         }
 
         // Выбираем случайное слово из возможных
-        Random random = new Random();
-        String hint = possibleWords.get(random.nextInt(possibleWords.size()));
+        String hint = filteredWords.get(random.nextInt(filteredWords.size()));
 
-        log.println("Выдана подсказка: " + hint + " (из " + possibleWords.size() + " возможных слов)");
+        log.println("Выдана подсказка: " + hint + " (из " + filteredWords.size() + " возможных слов)");
 
         return hint;
     }
